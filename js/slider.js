@@ -23,8 +23,8 @@
 		this.element = slice;
 	}
 
-	Slice.prototype.rotate = function( rotation ){
-		this.element.animate( { 'border-spacing': 0 },
+	Slice.prototype.rotate = function( rotation, delay ){
+		this.element.delay( delay ).animate( { 'border-spacing': 0 },
 		{
 			duration: 1000,
 			step: function(){
@@ -41,6 +41,7 @@
 	function Slider( element ){
 		this.element = $( element );
 		this.rotation = 0;
+		this.animating = false;
 		this.slice_total = 10;
 		this.slice_width = this.element.width() / this.slice_total;
 		this.slices = new Array();
@@ -62,11 +63,21 @@
 	}
 
 	Slider.prototype.rotate = function( direction ){
-		var self = this;
-		direction.data[0] === 'n' ? self.rotation += 90 : self.rotation -= 90;
-		$.each( self.slices, function( i ){
-			this.rotate( self.rotation );
-		});
+		if ( !this.animating ){
+			
+			var self = this;
+			self.animating = true;
+			direction.data[0] === 'n' ? self.rotation += 90 : self.rotation -= 90;
+
+			$.each( self.slices, function( i ){
+				this.rotate( self.rotation, 150 * i );
+			});
+
+			setTimeout( function() {
+				self.animating = false;
+			}, 1000 + ( self.slices.length * 150 ));
+
+		};
 	}
 
 	Slider.prototype.display = function(){
