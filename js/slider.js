@@ -2,6 +2,7 @@
 
 	//Slice
 	function Slice( index, width ){
+		this.element = null;
 		this.index = index;
 		this.width = width;
 		this.build();
@@ -23,14 +24,24 @@
 	}
 
 	Slice.prototype.rotate = function( rotation ){
-		this.element.css( { '-webkit-transform': 'rotate3d(1, 0, 0, ' + rotation + 'deg)' } );
+		this.element.animate( { 'border-spacing': 0 },
+		{
+			duration: 1000,
+			step: function(){
+				$(this).css({
+					'-webkit-transition-duration': '1000ms',
+					'-webkit-transform': 'rotate3d(1, 0, 0, ' + rotation + 'deg)'
+				})
+			},
+			complete: function(){  }
+		});
 	}
 
 	//Slider
 	function Slider( element ){
 		this.element = $( element );
 		this.rotation = 0;
-		this.slice_total = 2;
+		this.slice_total = 10;
 		this.slice_width = this.element.width() / this.slice_total;
 		this.slices = new Array();
 		this.build();
@@ -53,7 +64,7 @@
 	Slider.prototype.rotate = function( direction ){
 		var self = this;
 		direction.data[0] === 'n' ? self.rotation += 90 : self.rotation -= 90;
-		$.each( self.slices, function(){
+		$.each( self.slices, function( i ){
 			this.rotate( self.rotation );
 		});
 	}
