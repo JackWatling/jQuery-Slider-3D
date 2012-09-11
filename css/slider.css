@@ -44,3 +44,8 @@ section.back 	{ -webkit-transform: rotate3d(1, 0, 0, 180deg) translate3d( 0, 0, 
 section.bottom	{ -webkit-transform: rotate3d(1, 0, 0, 270deg) translate3d( 0, 0, 200px ); }
 section.left	{ -webkit-transform: rotate3d(0, 1, 0, -90deg) translate3d( 0, 0, 200px ); }
 section.right	{ -webkit-transform: rotate3d(0, 1, 0, 90deg) translate3d( 0, 0, 200px ); }
+
+section.slider nav{
+	position: absolute;
+	bottom: 0;
+}

@@ -22,9 +22,14 @@
 		this.element = slice;
 	}
 
+	Slice.prototype.rotate = function( rotation ){
+		this.element.css( { '-webkit-transform': 'rotate3d(1, 0, 0, ' + rotation + 'deg)' } );
+	}
+
 	//Slider
 	function Slider( element ){
 		this.element = $( element );
+		this.rotation = 0;
 		this.slice_total = 2;
 		this.slice_width = this.element.width() / this.slice_total;
 		this.slices = new Array();
@@ -37,6 +42,20 @@
 		for (var i = 0; i < this.slice_total; i++){
 			this.slices.push( new Slice( i, this.slice_width ) );
 		}
+
+		//Add navigation
+		$('<nav></nav>')
+			.append( $( '<a class="next">Next</a>' ).on( 'click', [ 'n' ], $.proxy( this.rotate, this ) ) )
+			.append( $( '<a class="prev">Prev</a>' ).on( 'click', [ 'p' ], $.proxy( this.rotate, this ) ) )
+			.appendTo( this.element );
+	}
+
+	Slider.prototype.rotate = function( direction ){
+		var self = this;
+		direction.data[0] === 'n' ? self.rotation += 90 : self.rotation -= 90;
+		$.each( self.slices, function(){
+			this.rotate( self.rotation );
+		});
 	}
 
 	Slider.prototype.display = function(){
