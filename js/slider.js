@@ -23,14 +23,14 @@
 		this.element = slice;
 	}
 
-	Slice.prototype.rotate = function( rotation, delay, face, background ){
+	Slice.prototype.rotate = function( rotation, duration, delay, transition, face, background ){
 		this.update( face, background );
 		this.element.delay( delay ).animate( { 'border-spacing': 0 },
 		{
-			duration: 500,
+			// duration: duration,
 			step: function(){
 				$(this).css({
-					'-webkit-transition-duration': '500ms',
+					'-webkit-transition-duration': duration + 'ms',
 					'-webkit-transform': 'rotate3d(1, 0, 0, ' + rotation + 'deg)'
 				})
 			},
@@ -48,16 +48,21 @@
 	function Slider( element, options ){
 		this.element = $( element ).addClass('slider');
 		this.options = $.extend( {}, $.fn.slider.options, options );
+
+		this.init();
+		this.build();
+		this.display();
+	}
+
+	Slider.prototype.init = function(){
 		this.rotation = 0;
 		this.face = 0;
 		this.animating = false;
 		this.images = this.element.children('img').remove();
-		this.image_current = 0;
-		this.slice_total = 10;
+		this.image_current = this.options.start < this.images.length - 1 ? this.options.start : 0;
+		this.slice_total = this.options.slices;
 		this.slice_width = this.element.width() / this.slice_total;
 		this.slices = new Array();
-		this.build();
-		this.display();
 	}
 
 	Slider.prototype.build = function(){
@@ -75,6 +80,17 @@
 	}
 
 	Slider.prototype.rotate = function( direction ){
+		var shuffle = function( slices ){
+			var j, x, i = slices.length;
+			while ( i ){
+				j = parseInt( Math.random() * i );
+				x = slices[--i];
+				slices[i] = slices[j];
+				slices[j] = x;
+			}
+			return slices;
+		};
+
 		if ( !this.animating ){
 			var self = this;
 			self.animating = true;
@@ -89,8 +105,8 @@
 				self.image_current = self.image_current < self.images.length - 1 ? self.image_current + 1 : 0;
 			}
 
-			$.each( self.slices, function( i ){
-				this.rotate( self.rotation, self.options.delay * i, self.face, self.images.eq( self.image_current ).attr('src') );
+			$.each( self.options.sequential ? self.slices : shuffle( self.slices ), function( i ){
+				this.rotate( self.rotation, self.options.duration, self.options.delay * i, self.options.transition, self.face, self.images.eq( self.image_current ).attr('src') );
 			});
 
 			setTimeout( function() {
@@ -120,7 +136,11 @@
 
 	$.fn.slider.options = {
 		slices: 10,
-		delay: 150
+		duration: 500,
+		delay: 150,
+		start: 0,
+		sequential: true,
+		vertical: false
 	}
 
 })( jQuery, window, document );

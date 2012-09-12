@@ -3,11 +3,13 @@ section.slider{
 	margin: 0 auto;
 	margin-top: 200px;
 	position: relative;
+	-webkit-perspective: 1000;
 }
 
 section.slides{
+	display: block;
 	height: 400px;
-	-webkit-perspective: 1000;
+	-webkit-transform: translateZ( -200px );
 	-webkit-transform-style: preserve-3d;
 }
 
