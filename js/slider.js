@@ -10,13 +10,13 @@
 
 	Slice.prototype.build = function(){
 		var self = this;
-		var parts = ["front", "top", "back", "bottom", "left", "right"];
+		var parts = ['front', 'top', 'back', 'bottom', 'left', 'right'];
 		var slice = $( '<section class="slice"></section>' ).css( { width: this.width } );
 
 		$.each( parts, function( i ){
 			slice.append(
 				$( '<section></section>', { class: this } )
-					.css( this == 'right' ? { left: -400 + self.width } : {} )
+					.css( this == 'right' ? { left: -400 + self.width } : this != 'left' ? { 'background-position': -self.index * self.width } : {} )
 			);
 		});
 
@@ -40,14 +40,12 @@
 
 	Slice.prototype.update = function( face, background ){
 		this.element.children().eq(face).css({
-			'background-image': 'url(\'' + background + '\')',
-			'background-position': -this.index * this.width
+			'background-image': 'url(\'' + background + '\')'
 		});
 	}
 
 	//Slider
 	function Slider( element ){
-		// this.element = $( element ).children(':not(img)').remove().end();
 		this.element = $( element );
 		this.rotation = 0;
 		this.face = 0;
