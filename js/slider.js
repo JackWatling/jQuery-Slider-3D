@@ -26,10 +26,10 @@
 	Slice.prototype.rotate = function( rotation, delay ){
 		this.element.delay( delay ).animate( { 'border-spacing': 0 },
 		{
-			duration: 1000,
+			duration: 250,
 			step: function(){
 				$(this).css({
-					'-webkit-transition-duration': '1000ms',
+					'-webkit-transition-duration': '250ms',
 					'-webkit-transform': 'rotate3d(1, 0, 0, ' + rotation + 'deg)'
 				})
 			},
@@ -39,9 +39,13 @@
 
 	//Slider
 	function Slider( element ){
+		// this.element = $( element ).children(':not(img)').remove().end();
 		this.element = $( element );
 		this.rotation = 0;
+		this.face = 0;
 		this.animating = false;
+		this.images = this.element.children('img').remove();
+		this.image_current = 0;
 		this.slice_total = 10;
 		this.slice_width = this.element.width() / this.slice_total;
 		this.slices = new Array();
@@ -64,18 +68,28 @@
 
 	Slider.prototype.rotate = function( direction ){
 		if ( !this.animating ){
-			
 			var self = this;
 			self.animating = true;
-			direction.data[0] === 'n' ? self.rotation += 90 : self.rotation -= 90;
+
+			if ( direction.data[0] !== 'n' ) {
+				self.rotation += 90;
+				self.face = self.face > 0 ? self.face - 1 : 3;
+				self.image_current = self.image_current > 0 ? self.image_current - 1 : self.images.length - 1;
+			} else {
+				self.rotation -= 90;
+				self.face = self.face < 3 ? self.face + 1 : 0;
+				self.image_current = self.image_current < self.images.length - 1 ? self.image_current + 1 : 0;
+			}
+
+			console.log( self.face );
 
 			$.each( self.slices, function( i ){
-				this.rotate( self.rotation, 150 * i );
+				this.rotate( self.rotation, 0 * i );
 			});
 
 			setTimeout( function() {
 				self.animating = false;
-			}, 1000 + ( self.slices.length * 150 ));
+			}, 1000 + ( self.slices.length * 0 ));
 
 		};
 	}
