@@ -23,17 +23,25 @@
 		this.element = slice;
 	}
 
-	Slice.prototype.rotate = function( rotation, delay ){
+	Slice.prototype.rotate = function( rotation, delay, face, background ){
+		this.update( face, background );
 		this.element.delay( delay ).animate( { 'border-spacing': 0 },
 		{
-			duration: 250,
+			duration: 500,
 			step: function(){
 				$(this).css({
-					'-webkit-transition-duration': '250ms',
+					'-webkit-transition-duration': '500ms',
 					'-webkit-transform': 'rotate3d(1, 0, 0, ' + rotation + 'deg)'
 				})
 			},
 			complete: function(){  }
+		});
+	}
+
+	Slice.prototype.update = function( face, background ){
+		this.element.children().eq(face).css({
+			'background-image': 'url(\'' + background + '\')',
+			'background-position': -this.index * this.width
 		});
 	}
 
@@ -57,6 +65,7 @@
 		//Construct slices
 		for (var i = 0; i < this.slice_total; i++){
 			this.slices.push( new Slice( i, this.slice_width ) );
+			this.slices[i].update( 0, this.images.eq( this.image_current ).attr('src') );
 		}
 
 		//Add navigation
@@ -81,15 +90,13 @@
 				self.image_current = self.image_current < self.images.length - 1 ? self.image_current + 1 : 0;
 			}
 
-			console.log( self.face );
-
 			$.each( self.slices, function( i ){
-				this.rotate( self.rotation, 0 * i );
+				this.rotate( self.rotation, 150 * i, self.face, self.images.eq( self.image_current ).attr('src') );
 			});
 
 			setTimeout( function() {
 				self.animating = false;
-			}, 1000 + ( self.slices.length * 0 ));
+			}, 500 + ( self.slices.length * 150 ));
 
 		};
 	}
