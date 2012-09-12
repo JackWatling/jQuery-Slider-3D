@@ -2,6 +2,7 @@ section.slider{
 	width: 800px;
 	margin: 0 auto;
 	margin-top: 200px;
+	position: relative;
 }
 
 section.slides{
@@ -47,5 +48,9 @@ section.right	{ -webkit-transform: rotate3d(0, 1, 0, 90deg) translate3d( 0, 0, 2
 
 section.slider nav{
 	position: absolute;
-	bottom: 0;
+	bottom: -100px;
+}
+
+section.slider:last-child nav{
+	right: 0;
 }

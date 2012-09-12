@@ -45,8 +45,9 @@
 	}
 
 	//Slider
-	function Slider( element ){
+	function Slider( element, options ){
 		this.element = $( element );
+		this.options = $.extend( {}, $.fn.slider.options, options );
 		this.rotation = 0;
 		this.face = 0;
 		this.animating = false;
@@ -89,12 +90,12 @@
 			}
 
 			$.each( self.slices, function( i ){
-				this.rotate( self.rotation, 150 * i, self.face, self.images.eq( self.image_current ).attr('src') );
+				this.rotate( self.rotation, self.options.delay * i, self.face, self.images.eq( self.image_current ).attr('src') );
 			});
 
 			setTimeout( function() {
 				self.animating = false;
-			}, 500 + ( self.slices.length * 150 ));
+			}, 500 + ( self.slices.length * self.options.delay ));
 
 		};
 	}
@@ -111,9 +112,15 @@
 		this.element.append( slides );
 	}
 
-	$.fn.slider = function(){
-		var slider = new Slider( this );
-		return slider;
+	$.fn.slider = function( options ){
+		return this.each( function(){
+			$.data( this, 'slider', new Slider( this, options ) );
+		});
+	}
+
+	$.fn.slider.options = {
+		slices: 10,
+		delay: 150
 	}
 
 })( jQuery, window, document );
