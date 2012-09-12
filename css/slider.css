@@ -25,21 +25,14 @@ section.slice > *{
 	width: 100%;
 	display: block;
 	position: absolute;
-	/*opacity: 0.5;*/
 }
 
 section.slice > .left,
 section.slice > .right{
 	width: 400px;
 	left: 0px;
+	background: #333333;
 }
-
-section.front	{ background: orange; }
-section.top		{ background: red; }
-section.back 	{ background: yellow; }
-section.bottom	{ background: purple; }
-section.left	{ background: black; }
-section.right	{ background: black; }
 
 section.front	{ -webkit-transform: rotate3d(0, 0, 0, 0deg) translate3d( 0, 0, 200px ); }
 section.top		{ -webkit-transform: rotate3d(1, 0, 0, 90deg) translate3d( 0, 0, 200px ); }
@@ -48,11 +41,33 @@ section.bottom	{ -webkit-transform: rotate3d(1, 0, 0, 270deg) translate3d( 0, 0,
 section.left	{ -webkit-transform: rotate3d(0, 1, 0, -90deg) translate3d( 0, 0, 200px ); }
 section.right	{ -webkit-transform: rotate3d(0, 1, 0, 90deg) translate3d( 0, 0, 200px ); }
 
-section.slider nav{
+section.slider nav a{
+	width: 50px;
+	height: 50px;
+	display: block;
 	position: absolute;
-	bottom: -100px;
+	cursor: pointer;
+	top: 50%;
+	opacity: 0.5;
+	margin-top: -25px;
+	-webkit-transition: opacity 500ms;
 }
 
-section.slider:last-child nav{
-	right: 0;
+section.slider nav a.next{
+	background: url('../images/next_arrow.png');
+	right: -60px;
+}
+
+section.slider nav a.prev{
+	background: url('../images/prev_arrow.png');
+	left: -60px;
+}
+
+section.slider nav a:hover{
+	background-position: -50px 0;
+	opacity: 1;
+}
+
+section.slider:hover nav a{
+	opacity: 1;
 }

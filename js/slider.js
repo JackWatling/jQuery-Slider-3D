@@ -27,7 +27,7 @@
 		this.update( face, background );
 		this.element.delay( delay ).animate( { 'border-spacing': 0 },
 		{
-			// duration: duration,
+			duration: duration,
 			step: function(){
 				$(this).css({
 					'-webkit-transition-duration': duration + 'ms',
@@ -74,8 +74,8 @@
 
 		//Add navigation
 		$('<nav></nav>')
-			.append( $( '<a class="next">Next</a>' ).on( 'click', [ 'n' ], $.proxy( this.rotate, this ) ) )
-			.append( $( '<a class="prev">Prev</a>' ).on( 'click', [ 'p' ], $.proxy( this.rotate, this ) ) )
+			.append( $( '<a class="prev">' + this.options.prev + '</a>' ).on( 'click', [ 'p' ], $.proxy( this.rotate, this ) ) )
+			.append( $( '<a class="next">' + this.options.next + '</a>' ).on( 'click', [ 'n' ], $.proxy( this.rotate, this ) ) )
 			.appendTo( this.element );
 	}
 
@@ -95,7 +95,7 @@
 			var self = this;
 			self.animating = true;
 
-			if ( direction.data[0] !== 'n' ) {
+			if ( direction.data[0] === 'n' ) {
 				self.rotation += 90;
 				self.face = self.face > 0 ? self.face - 1 : 3;
 				self.image_current = self.image_current > 0 ? self.image_current - 1 : self.images.length - 1;
@@ -125,7 +125,7 @@
 			slides.append( this.element );
 		});
 
-		this.element.append( slides );
+		this.element.prepend( slides );
 	}
 
 	$.fn.slider = function( options ){
@@ -140,7 +140,8 @@
 		delay: 150,
 		start: 0,
 		sequential: true,
-		vertical: false
+		next: '',
+		prev: ''
 	}
 
 })( jQuery, window, document );
