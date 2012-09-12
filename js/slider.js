@@ -46,7 +46,7 @@
 
 	//Slider
 	function Slider( element, options ){
-		this.element = $( element );
+		this.element = $( element ).addClass('slider');
 		this.options = $.extend( {}, $.fn.slider.options, options );
 		this.rotation = 0;
 		this.face = 0;
