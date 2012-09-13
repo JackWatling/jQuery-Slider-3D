@@ -46,7 +46,7 @@
 
 	//Slider
 	function Slider( element, options ){
-		this.element = $( element ).addClass('slider');
+		this.element = $( element );
 		this.options = $.extend( {}, $.fn.slider.options, options );
 
 		this.init();
@@ -55,14 +55,17 @@
 	}
 
 	Slider.prototype.init = function(){
+		this.element.addClass('slider').css( { '-webkit-perspective': this.options.perspective } );
 		this.rotation = 0;
 		this.face = 0;
 		this.animating = false;
-		this.images = this.element.children('img').remove();
+		this.images = this.element.children('img');
 		this.image_current = this.options.start < this.images.length - 1 ? this.options.start : 0;
 		this.slice_total = this.options.slices;
 		this.slice_width = this.element.width() / this.slice_total;
 		this.slices = new Array();
+
+		this.element.empty();
 	}
 
 	Slider.prototype.build = function(){
@@ -135,6 +138,7 @@
 	}
 
 	$.fn.slider.options = {
+		perspective: 1000,
 		slices: 10,
 		duration: 500,
 		delay: 150,
