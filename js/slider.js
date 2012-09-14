@@ -66,6 +66,15 @@
 		this.slices = new Array();
 
 		this.element.empty();
+		this.preload( this.images );	//Preload images into DOM
+	}
+
+	Slider.prototype.preload = function( images ){
+		$.each( images, function(){
+			$('<img />', {
+				src: $(this).attr( 'src' )
+			});
+		});
 	}
 
 	Slider.prototype.build = function(){
@@ -106,7 +115,7 @@
 				self.rotation -= 90;
 				self.face = self.face < 3 ? self.face + 1 : 0;
 				self.image_current = self.image_current < self.images.length - 1 ? self.image_current + 1 : 0;
-			}
+			}			
 
 			$.each( self.options.sequential ? self.slices : shuffle( self.slices ), function( i ){
 				this.rotate( self.rotation, self.options.duration, self.options.delay * i, self.options.transition, self.face, self.images.eq( self.image_current ).attr('src') );
@@ -114,8 +123,7 @@
 
 			setTimeout( function() {
 				self.animating = false;
-			}, 500 + ( self.slices.length * self.options.delay ));
-
+			}, self.options.duration + ( self.slices.length * self.options.delay ));
 		};
 	}
 
