@@ -64,6 +64,7 @@
 		this.slices = new Array();
 		this.slice_total = this.options.slices;
 		this.slice_width = this.element.width() / this.slice_total;
+		this.total_duration = this.options.duration + ( this.slice_total * this.options.delay );
 
 		this.element.empty();
 		this.preload( this.images );	//Preload images into DOM
@@ -103,6 +104,16 @@
 			this.caption_hide();
 			this.caption_show();
 		}
+
+		//Start slideshow loop
+		if ( this.options.slideshow ){
+			setTimeout( $.proxy( this.slideshow, this ), this.options.slideshow_delay );
+		}
+	}
+
+	Slider.prototype.slideshow = function(){
+		this.rotate( { data: [ this.options.slideshow_forward ? 'n' : 'p' ] } );
+		setTimeout( $.proxy( this.slideshow, this ), this.total_duration + this.options.slideshow_delay );
 	}
 
 	Slider.prototype.rotate = function( direction ){
@@ -124,28 +135,26 @@
 			if ( direction.data[0] === 'n' ) {
 				self.rotation += 90;
 				self.face = self.face > 0 ? self.face - 1 : 3;
-				self.image_current = self.image_current > 0 ? self.image_current - 1 : self.images.length - 1;
+				self.image_current = self.image_current < self.images.length - 1 ? self.image_current + 1 : 0;
 			} else {
 				self.rotation -= 90;
 				self.face = self.face < 3 ? self.face + 1 : 0;
-				self.image_current = self.image_current < self.images.length - 1 ? self.image_current + 1 : 0;
+				self.image_current = self.image_current > 0 ? self.image_current - 1 : self.images.length - 1;
 			}
 
 			$.each( self.options.sequential ? self.slices : shuffle( self.slices ), function( i ){
 				this.rotate( self.rotation, self.options.duration, self.options.delay * i, self.options.transition, self.face, self.images.eq( self.image_current ).attr('src') );
 			});
 
-			var total_duration = self.options.duration + ( self.slices.length * self.options.delay );
-
 			setTimeout( function() {
 				self.animating = false;
-			}, total_duration);
+			}, self.total_duration);
 
 			if ( this.options.caption ){
 				self.caption_hide();
 				setTimeout( function(){
 					self.caption_show();
-				}, total_duration / 2);
+				}, self.total_duration / 2);
 			}
 		};
 	}
@@ -186,7 +195,10 @@
 		sequential: true,
 		next: '',
 		prev: '',
-		caption: true
+		caption: true,
+		slideshow: true,
+		slideshow_delay: 5000,
+		slideshow_forward: false
 	}
 
 })( jQuery, window, document );
