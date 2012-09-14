@@ -103,12 +103,6 @@
 			this.caption_hide();
 			this.caption_show();
 		}
-
-		// this.caption = this.options.caption
-		// 	? $('<section></section>', {
-		// 		class: 'caption'
-		// 	}).appendTo( this.element )
-		// 	: null;
 	}
 
 	Slider.prototype.rotate = function( direction ){
@@ -137,30 +131,34 @@
 				self.image_current = self.image_current < self.images.length - 1 ? self.image_current + 1 : 0;
 			}
 
-			self.caption_hide();
-
 			$.each( self.options.sequential ? self.slices : shuffle( self.slices ), function( i ){
 				this.rotate( self.rotation, self.options.duration, self.options.delay * i, self.options.transition, self.face, self.images.eq( self.image_current ).attr('src') );
 			});
 
+			var total_duration = self.options.duration + ( self.slices.length * self.options.delay );
+
 			setTimeout( function() {
 				self.animating = false;
-				self.caption_show();
-			}, self.options.duration + ( self.slices.length * self.options.delay ));
+			}, total_duration);
+
+			if ( this.options.caption ){
+				self.caption_hide();
+				setTimeout( function(){
+					self.caption_show();
+				}, total_duration / 2);
+			}
 		};
 	}
 
 	Slider.prototype.caption_hide = function(){
-		if( this.caption ){
-			this.caption.stop().css({
-				opacity: 0
-			});
-		}
+		this.caption.stop().css({
+			opacity: 0
+		});
 	}
 
 	Slider.prototype.caption_show = function(){
-		var caption = (this.images.eq( this.image_current ).attr( 'title' ) || this.images.eq( this.image_current ).attr( 'alt' ) ) || null;
-		if( this.caption  && caption ){
+		var caption = ( this.images.eq( this.image_current ).attr( 'title' ) || this.images.eq( this.image_current ).attr( 'alt' ) ) || null;
+		if ( caption ){
 			this.caption
 				.text( caption )
 				.css({
@@ -169,7 +167,7 @@
 				.animate({
 					left: 0,
 					opacity: 1
-				}, 500 );
+				}, 750 );
 		}
 	}
 
