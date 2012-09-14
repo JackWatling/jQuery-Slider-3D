@@ -87,3 +87,11 @@ section.slider section.caption{
 section.slider:hover section.caption{
 	opacity: 1;
 }
+
+section.slider section.progress{
+	width: 0%;
+	height: 20px;
+	background: rgba( 255, 255, 255, 0.5 );
+	position: absolute;
+	bottom: 0;
+}

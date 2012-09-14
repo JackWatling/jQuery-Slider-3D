@@ -51,7 +51,6 @@
 
 		this.init();
 		this.build();
-		this.display();
 	}
 
 	Slider.prototype.init = function(){
@@ -61,9 +60,9 @@
 		this.animating = false;
 		this.images = this.element.children('img');
 		this.image_current = this.options.start < this.images.length - 1 ? this.options.start : 0;
+		this.slices = new Array();
 		this.slice_total = this.options.slices;
 		this.slice_width = this.element.width() / this.slice_total;
-		this.slices = new Array();
 
 		this.element.empty();
 		this.preload( this.images );	//Preload images into DOM
@@ -78,10 +77,15 @@
 	}
 
 	Slider.prototype.build = function(){
+		var slides = $('<section></section>', { 
+			class: 'slides'
+		}).appendTo( this.element );
+
 		//Construct slices
 		for (var i = 0; i < this.slice_total; i++){
 			this.slices.push( new Slice( i, this.slice_width ) );
 			this.slices[i].update( 0, this.images.eq( this.image_current ).attr('src') );
+			slides.append( this.slices[i].element );
 		}
 
 		//Add navigation
@@ -125,18 +129,6 @@
 				self.animating = false;
 			}, self.options.duration + ( self.slices.length * self.options.delay ));
 		};
-	}
-
-	Slider.prototype.display = function(){
-		var slides = $('<section></section', { 
-			class: 'slides'
-		});
-
-		$.each( this.slices, function() {
-			slides.append( this.element );
-		});
-
-		this.element.prepend( slides );
 	}
 
 	$.fn.slider = function( options ){
