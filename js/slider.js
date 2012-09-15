@@ -104,16 +104,23 @@
 			this.caption_hide();
 			this.caption_show();
 		}
-
 		//Start slideshow loop
 		if ( this.options.slideshow ){
-			setTimeout( $.proxy( this.slideshow, this ), this.options.slideshow_delay );
+			this.slideshow_start();
 		}
 	}
 
 	Slider.prototype.slideshow = function(){
-		this.rotate( { data: [ this.options.slideshow_forward ? 'n' : 'p' ] } );
-		setTimeout( $.proxy( this.slideshow, this ), this.total_duration + this.options.slideshow_delay );
+		this.rotate( { data: [ ( this.options.slideshow_forward ? 'n' : 'p' ) ] } );
+		this.slideshow_timeout = setTimeout( $.proxy( this.slideshow, this ), this.total_duration + this.options.slideshow_delay );
+	}
+
+	Slider.prototype.slideshow_start = function(){
+		setTimeout( $.proxy( this.slideshow, this ), this.options.slideshow_delay );
+	}
+
+	Slider.prototype.slideshow_stop = function(){
+		clearTimeout( this.slideshow_timeout );
 	}
 
 	Slider.prototype.rotate = function( direction ){
@@ -198,7 +205,7 @@
 		caption: true,
 		slideshow: true,
 		slideshow_delay: 5000,
-		slideshow_forward: false
+		slideshow_forward: true
 	}
 
 })( jQuery, window, document );
