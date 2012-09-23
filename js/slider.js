@@ -65,6 +65,7 @@
 		this.slice_total = this.options.slices;
 		this.slice_width = this.element.width() / this.slice_total;
 		this.total_duration = this.options.duration + ( this.slice_total * this.options.delay );
+		this.slideshow_active = this.options.slideshow;
 
 		this.element.empty();
 		this.preload( this.images );	//Preload images into DOM
@@ -83,18 +84,19 @@
 			class: 'slides'
 		}).appendTo( this.element );
 
+		//Add navigation
+		this.nav = $('<nav></nav>')
+			.append( $( '<a class="prev">' + this.options.prev + '</a>' ).on( 'click', [ 'p' ], $.proxy( this.click, this ) ) )
+			.append( $( '<a class="next">' + this.options.next + '</a>' ).on( 'click', [ 'n' ], $.proxy( this.click, this ) ) )
+			.append( $( '<a class="lock"></a>' ).on( 'click', $.proxy( this.slideshow_toggle, this ) ) )
+			.appendTo( this.element );
+
 		//Construct slices
 		for (var i = 0; i < this.slice_total; i++){
 			this.slices.push( new Slice( i, this.slice_width ) );
 			this.slices[i].update( 0, this.images.eq( this.image_current ).attr('src') );
 			slides.append( this.slices[i].element );
 		}
-
-		//Add navigation
-		$('<nav></nav>')
-			.append( $( '<a class="prev">' + this.options.prev + '</a>' ).on( 'click', [ 'p' ], $.proxy( this.rotate, this ) ) )
-			.append( $( '<a class="next">' + this.options.next + '</a>' ).on( 'click', [ 'n' ], $.proxy( this.rotate, this ) ) )
-			.appendTo( this.element );
 
 		//Add caption
 		if ( this.options.caption ){
@@ -104,23 +106,49 @@
 			this.caption_hide();
 			this.caption_show();
 		}
-		//Start slideshow loop
-		if ( this.options.slideshow ){
-			this.slideshow_start();
+
+		//Slideshow
+		if ( this.slideshow_active ){
+			this.slideshow_init( true );
 		}
 	}
 
 	Slider.prototype.slideshow = function(){
-		this.rotate( { data: [ ( this.options.slideshow_forward ? 'n' : 'p' ) ] } );
-		this.slideshow_timeout = setTimeout( $.proxy( this.slideshow, this ), this.total_duration + this.options.slideshow_delay );
+		clearTimeout( this.slideshow_timeout );
+		if ( this.slideshow_active ){
+			this.slideshow_timeout = setTimeout( $.proxy( this.slideshow, this ), this.total_duration + this.options.slideshow_delay );
+			this.rotate( { data: [ ( this.options.slideshow_forward ? 'n' : 'p' ) ] } );
+		}
+		this.nav.find( 'a.lock' ).css( { 'background-position': ( !this.slideshow_active ? '0' : '25' ) + 'px 0px' } );
+		var d = new Date();
+		console.log( 'Change slide: ' + d.getSeconds() );
+		console.log( this.total_duration );
+
 	}
 
-	Slider.prototype.slideshow_start = function(){
-		setTimeout( $.proxy( this.slideshow, this ), this.options.slideshow_delay );
+	Slider.prototype.slideshow_init = function( delay ){
+		clearTimeout( this.slideshow_timeout );
+		this.slideshow_timeout = setTimeout( $.proxy( this.slideshow, this ), delay ? this.options.slideshow_delay : 0 );
+		this.nav.find( 'a.lock' ).css( { 'background-position': ( !this.slideshow_active ? '0' : '25' ) + 'px 0px' } );
 	}
 
 	Slider.prototype.slideshow_stop = function(){
+		this.slideshow_active = false;
 		clearTimeout( this.slideshow_timeout );
+		this.nav.find( 'a.lock' ).css( { 'background-position': ( !this.slideshow_active ? '0' : '25' ) + 'px 0px' } );
+	}
+
+	Slider.prototype.slideshow_toggle = function(){
+		this.slideshow_active = !this.slideshow_active;
+		if ( this.slideshow_active ) {
+			this.slideshow_init( false );
+		}
+		this.nav.find( 'a.lock' ).css( { 'background-position': ( !this.slideshow_active ? '0' : '25' ) + 'px 0px' } );
+	}
+
+	Slider.prototype.click = function( direction ){
+		this.slideshow_stop();
+		this.rotate( direction );
 	}
 
 	Slider.prototype.rotate = function( direction ){
