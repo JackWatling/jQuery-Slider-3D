@@ -88,7 +88,6 @@
 		this.nav = $('<nav></nav>')
 			.append( $( '<a class="prev">' + this.options.prev + '</a>' ).on( 'click', [ 'p' ], $.proxy( this.click, this ) ) )
 			.append( $( '<a class="next">' + this.options.next + '</a>' ).on( 'click', [ 'n' ], $.proxy( this.click, this ) ) )
-			.append( $( '<a class="lock"></a>' ).on( 'click', $.proxy( this.slideshow_toggle, this ) ) )
 			.appendTo( this.element );
 
 		//Construct slices
@@ -107,8 +106,12 @@
 			this.caption_show();
 		}
 
+		var self = this;
+
 		//Slideshow
 		if ( this.slideshow_active ){
+			if ( this.options.slideshow_display_lock )
+				self.lock = $( '<a class="lock"></a>' ).on( 'click', $.proxy( this.slideshow_toggle, this ) ).appendTo( this.nav );
 			this.slideshow_init( true );
 		}
 	}
@@ -119,23 +122,19 @@
 			this.slideshow_timeout = setTimeout( $.proxy( this.slideshow, this ), this.total_duration + this.options.slideshow_delay );
 			this.rotate( { data: [ ( this.options.slideshow_forward ? 'n' : 'p' ) ] } );
 		}
-		this.nav.find( 'a.lock' ).css( { 'background-position': ( !this.slideshow_active ? '0' : '25' ) + 'px 0px' } );
-		var d = new Date();
-		console.log( 'Change slide: ' + d.getSeconds() );
-		console.log( this.total_duration );
-
+		this.slideshow_update_lock();
 	}
 
 	Slider.prototype.slideshow_init = function( delay ){
 		clearTimeout( this.slideshow_timeout );
 		this.slideshow_timeout = setTimeout( $.proxy( this.slideshow, this ), delay ? this.options.slideshow_delay : 0 );
-		this.nav.find( 'a.lock' ).css( { 'background-position': ( !this.slideshow_active ? '0' : '25' ) + 'px 0px' } );
+		this.slideshow_update_lock();
 	}
 
 	Slider.prototype.slideshow_stop = function(){
 		this.slideshow_active = false;
 		clearTimeout( this.slideshow_timeout );
-		this.nav.find( 'a.lock' ).css( { 'background-position': ( !this.slideshow_active ? '0' : '25' ) + 'px 0px' } );
+		this.slideshow_update_lock();
 	}
 
 	Slider.prototype.slideshow_toggle = function(){
@@ -143,7 +142,17 @@
 		if ( this.slideshow_active ) {
 			this.slideshow_init( false );
 		}
-		this.nav.find( 'a.lock' ).css( { 'background-position': ( !this.slideshow_active ? '0' : '25' ) + 'px 0px' } );
+		this.slideshow_update_lock();
+	}
+
+	Slider.prototype.slideshow_update_lock = function(){
+		if ( this.options.slideshow_display_lock ){
+			this.lock.css( { 'background-position': ( !this.slideshow_active ? '0' : '25' ) + 'px 0px', 'opacity': 1 } );
+			if ( !this.options.slideshow_fade_lock )
+				return;
+			if ( this.slideshow_active )
+				this.lock.animate( { 'opacity': 0 }, { duration: 500 } );
+		}
 	}
 
 	Slider.prototype.click = function( direction ){
@@ -233,7 +242,9 @@
 		caption: true,
 		slideshow: true,
 		slideshow_delay: 5000,
-		slideshow_forward: true
+		slideshow_forward: true,
+		slideshow_display_lock: true,
+		slideshow_fade_lock: true
 	}
 
 })( jQuery, window, document );
